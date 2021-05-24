@@ -8,7 +8,6 @@
 * Docker
 * IntelliJ Community
 * Heroku CLI
-* Travis CLI
 
 ## DataBase
 
@@ -27,7 +26,11 @@ docker run --name cities-db -d -p 5432:5432 -e POSTGRES_USER=postgres_user_city 
 ```shell script
 cd ~/workspace/sql-paises-estados-cidades/PostgreSQL
 
+// Docker Desktop
 docker run -it --rm --net=host -v $PWD:/tmp postgres /bin/bash
+
+// Docker Tollbox - via Docker Quickstarter Terminal
+docker run -it --rm --net=host -v "$(pwd):/tmp" postgres /bin/bash
 
 psql -h localhost -U postgres_user_city cities -f /tmp/pais.sql
 psql -h localhost -U postgres_user_city cities -f /tmp/estado.sql
@@ -98,66 +101,5 @@ select earth_distance(
 * [DevCenter](https://devcenter.heroku.com/articles/getting-started-with-gradle-on-heroku)
 
 ```shell script
-heroku create dio-cities-api --addons=heroku-postgresql
+heroku create
 ```
-
-## Code Quality
-
-### PMD
-
-+ https://pmd.github.io/pmd-6.8.0/index.html
-
-### Checkstyle
-
-+ https://checkstyle.org/
-
-+ https://checkstyle.org/google_style.html
-
-+ http://google.github.io/styleguide/javaguide.html
-
-```shell script
-wget https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/google_checks.xml
-```
-
-## InMemory Database Testing
-
-+ http://www.h2database.com/html/features.html
-
-
-## Migrations
-
-+ https://flywaydb.org/
-
-New Data base
-```shell script
-docker run --name dio-cities-db-2 -d -p 5432:5432 -e POSTGRES_USER=postgres_user_city -e POSTGRES_PASSWORD=super_password -e POSTGRES_DB=cities postgres
-```
-```shell script
-cp ~/workspace/sql-paises-estados-cidades/PostgreSQL/pais.sql  src/main/resources/db/migration/V1__create_paises.sql  
-cp ~/workspace/sql-paises-estados-cidades/PostgreSQL/estado.sql src/main/resources/db/migration/V2__create_estados.sql  
-cp ~/workspace/sql-paises-estados-cidades/PostgreSQL/cidade.sql src/main/resources/db/migration/V3__create_cidades.sql
-```
-
-## CI
-
-### Travis
-+ https://github.com/travis-ci/travis.rb#readme
-
-+ https://docs.travis-ci.com/user/tutorial/
-
-#### extra
-
-+ https://docs.travis-ci.com/user/conditional-builds-stages-jobs/
-+ https://docs.travis-ci.com/user/deployment-v2/conditional
-
-+ [Heroku Deployment](https://docs.travis-ci.com/user/deployment/heroku/)
-
-
-```roomsql
-
-```
-
-SELECT cidade.id, cidade.nome, cidade.lat_lon
-FROM cidade
-WHERE earth_box(ll_to_earth(-21.95840072631836, -47.98820114135742), 30000) @> ll_to_earth(cidade.lat_lon[0],cidade.lat_lon[1])
-AND earth_distance(ll_to_earth(-21.95840072631836, -47.98820114135742), ll_to_earth(cidade.lat_lon[0],cidade.lat_lon[1])) < 30000;
